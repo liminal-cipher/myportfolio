@@ -15,6 +15,7 @@
             --border-color: #30363d;
             --font-main: 'Segoe UI', sans-serif;
             --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            --cv-color: #00ff00; /* Green for Computer Vision */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,6 +26,7 @@
             font-family: var(--font-main);
             overflow-x: hidden;
             line-height: 1.6;
+            cursor: crosshair; /* Adds to the tech vibe */
         }
 
         /* --- Background Animation --- */
@@ -198,16 +200,65 @@
         }
         .btn:hover { background: rgba(88, 166, 255, 0.1); }
 
+        /* --- NEW FEATURE: YOLO Computer Vision Tracking --- */
+        #yolo-box {
+            position: fixed;
+            border: 2px solid var(--cv-color); 
+            pointer-events: none; /* Let clicks pass through */
+            z-index: 9999;
+            display: none; /* Hidden by default */
+            transition: width 0.1s, height 0.1s; /* Smooth resizing */
+            width: 50px; 
+            height: 50px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        #yolo-label {
+            position: absolute;
+            top: -20px;
+            left: -2px;
+            background: var(--cv-color);
+            color: black;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            white-space: nowrap;
+        }
+
+        .toggle-cv-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(13, 17, 23, 0.9);
+            border: 1px solid var(--cv-color);
+            color: var(--cv-color);
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .toggle-cv-btn:hover { background: var(--cv-color); color: black; }
+
         /* Responsive */
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
-            .terminal-window { display: none; } /* Hide terminal on small mobile for clean UI */
+            .terminal-window { display: none; }
+            .toggle-cv-btn { display: none; } /* Hide tracking on mobile */
         }
     </style>
 </head>
 <body>
 
     <canvas id="bg-canvas"></canvas>
+
+    <div id="yolo-box">
+        <div id="yolo-label">Object: 99%</div>
+    </div>
+    <button class="toggle-cv-btn" onclick="toggleCV()">[ ] Toggle Vision Mode</button>
 
     <nav>
         <div class="logo">User.is_hired = True</div>
@@ -427,6 +478,49 @@
             requestAnimationFrame(animate);
         }
         animate();
+
+        // --- NEW: YOLO Computer Vision Mouse Tracker ---
+        const box = document.getElementById('yolo-box');
+        const label = document.getElementById('yolo-label');
+        let cvMode = false;
+
+        const labels = [
+            "Recruiter: 98%", 
+            "Human: 99%", 
+            "Hiring Manager: 95%", 
+            "Azure Fan: 100%"
+        ];
+
+        function toggleCV() {
+            cvMode = !cvMode;
+            box.style.display = cvMode ? 'block' : 'none';
+            // Update button text
+            const btn = document.querySelector('.toggle-cv-btn');
+            btn.innerText = cvMode ? "[X] Disable Vision Mode" : "[ ] Toggle Vision Mode";
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            if (!cvMode) return;
+
+            // Offset the box slightly so it surrounds the cursor
+            const x = e.clientX - 25; 
+            const y = e.clientY - 25;
+            
+            // Dynamic width/height breathing effect
+            const width = 50 + Math.sin(Date.now() / 200) * 10;
+            const height = 50 + Math.cos(Date.now() / 200) * 10;
+
+            box.style.left = `${x}px`;
+            box.style.top = `${y}px`;
+            box.style.width = `${width}px`;
+            box.style.height = `${height}px`;
+
+            // Randomly change label
+            if (Math.random() < 0.05) { 
+                const randomLabel = labels[Math.floor(Math.random() * labels.length)];
+                label.innerText = randomLabel;
+            }
+        });
     </script>
 </body>
 </html>
