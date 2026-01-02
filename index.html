@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Solutions Engineer | Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff; /* Azure Blue-ish */
+            --secondary-color: #8b949e;
+            --card-bg: rgba(22, 27, 34, 0.8);
+            --border-color: #30363d;
+            --font-main: 'Segoe UI', sans-serif;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Background Animation --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* --- Navbar --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo { font-size: 1.2rem; font-weight: bold; color: var(--accent-color); font-family: var(--font-mono); }
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent-color); }
+
+        /* --- Layout --- */
+        section {
+            padding: 100px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* --- Hero Section --- */
+        #home {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .intro-label { font-family: var(--font-mono); color: var(--accent-color); margin-bottom: 15px; }
+        
+        h1 { 
+            font-size: 3.5rem; 
+            line-height: 1.1; 
+            margin-bottom: 15px; 
+            background: linear-gradient(90deg, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 { font-size: 1.8rem; color: var(--secondary-color); margin-bottom: 30px; font-weight: 400; }
+
+        /* --- Terminal Window (The Interactive NLP Element) --- */
+        .terminal-window {
+            width: 100%;
+            max-width: 700px;
+            background: #000;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: var(--font-mono);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .terminal-header {
+            background: #161b22;
+            padding: 10px 15px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #27c93f; }
+
+        .terminal-body {
+            padding: 20px;
+            height: 250px; /* Fixed height */
+            overflow-y: auto;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .msg-system { color: var(--accent-color); margin-bottom: 10px; }
+        .msg-user { color: #fff; margin-bottom: 10px; text-align: right; }
+        .input-line { display: flex; color: #fff; margin-top: 10px; }
+        .prompt { color: #27c93f; margin-right: 10px; }
+        .cursor { animation: blink 1s infinite; }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* --- Skills Grid --- */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .skill-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .skill-box h3 { color: var(--accent-color); margin-bottom: 15px; font-size: 1.1rem; }
+        .skill-list { list-style: none; }
+        .skill-list li { margin-bottom: 8px; font-size: 0.95rem; display: flex; align-items: center; }
+        .skill-list li i { margin-right: 10px; color: var(--secondary-color); }
+
+        /* --- Project Cards --- */
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .folder-icon { color: var(--accent-color); font-size: 2rem; }
+        .project-links a { color: var(--text-color); font-size: 1.2rem; margin-left: 15px; }
+        .project-links a:hover { color: var(--accent-color); }
+
+        .tech-stack { 
+            display: flex; 
+            gap: 15px; 
+            margin-top: 20px; 
+            font-family: var(--font-mono); 
+            font-size: 0.8rem; 
+            color: var(--secondary-color); 
+        }
+
+        /* --- Contact / CTA --- */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: var(--font-mono);
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: rgba(88, 166, 255, 0.1); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .terminal-window { display: none; } /* Hide terminal on small mobile for clean UI */
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav>
+        <div class="logo">User.is_hired = True</div>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#skills">Stack</a>
+            <a href="#projects">Projects</a>
+            <a href="mailto:your.email@example.com">Contact</a>
+        </div>
+    </nav>
+
+    <section id="home">
+        <p class="intro-label">Hi, I'm liminal-cipher</p>
+        <h1>Building Intelligent Systems<br>on the Cloud.</h1>
+        <h2>Aspiring AI Engineer | TSM Major & CS Minor</h2>
+        
+        <p style="max-width: 600px; color: var(--secondary-color);">
+            I bridge the gap between complex algorithms and real-world applications. 
+            Currently studying <b>Azure AI</b> and specializing in <b>NLP</b> to build smarter software solutions.
+        </p>
+
+        <div class="terminal-window" id="terminal">
+            <div class="terminal-header">
+                <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                <span style="margin-left: 10px; font-size: 0.8rem; color: #888;">bash — python main.py</span>
+            </div>
+            <div class="terminal-body" id="terminal-content">
+                <div class="msg-system">> Initializing Portfolio Agent...</div>
+                <div class="msg-system">> Connected to Azure OpenAI Services... [OK]</div>
+                <div class="msg-system">> How can I help you today?</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="runCommand('Show Skills')" class="btn" style="margin-right: 10px; cursor: pointer;">run show_skills()</button>
+            <button onclick="runCommand('My Goal')" class="btn" style="margin-right: 10px; cursor: pointer;">run career_goal()</button>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2><span style="color: var(--accent-color);">01.</span> Technical Stack</h2>
+        <div class="skills-container">
+            <div class="skill-box">
+                <h3><i class="fas fa-brain"></i> AI & NLP</h3>
+                <ul class="skill-list">
+                    <li>OpenAI API / Azure OpenAI Service</li>
+                    <li>LangChain / LlamaIndex</li>
+                    <li>Prompt Engineering</li>
+                    <li>RAG (Retrieval Augmented Generation)</li>
+                </ul>
+            </div>
+            <div class="skill-box">
+                <h3><i class="fas fa-cloud"></i> Cloud & DevOps</h3>
+                <ul class="skill-list">
+                    <li>Microsoft Azure (Currently Studying)</li>
+                    <li>Docker / Containerization</li>
+                    <li>Git / GitHub Actions</li>
+                    <li>Linux Command Line</li>
+                </ul>
+            </div>
+            <div class="skill-box">
+                <h3><i class="fas fa-code"></i> Core Development</h3>
+                <ul class="skill-list">
+                    <li>Python (Pandas, NumPy, Flask/FastAPI)</li>
+                    <li>Java (CS Minor)</li>
+                    <li>SQL / NoSQL Databases</li>
+                    <li>HTML/CSS/JS (Frontend Basics)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2><span style="color: var(--accent-color);">02.</span> Bootcamp & Personal Projects</h2>
+        <p style="color: var(--secondary-color); margin-bottom: 30px;">
+            Here are some projects I am building to apply my TSM and CS knowledge.
+        </p>
+
+        <div class="project-card">
+            <div class="project-header">
+                <i class="far fa-folder folder-icon"></i>
+                <div class="project-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            <h3><a href="#" style="text-decoration: none; color: inherit;">Enterprise Document Chatbot (RAG)</a></h3>
+            <p style="margin-top: 10px; color: #a8b3cf;">
+                An intelligent Q&A system that allows users to chat with internal PDF manuals. 
+                Built using <b>LangChain</b> to chunk documents and <b>Azure OpenAI</b> for embeddings and generation.
+                Focuses on reducing information retrieval time.
+            </p>
+            <div class="tech-stack">
+                <span>Python</span>
+                <span>LangChain</span>
+                <span>Azure Cognitive Search</span>
+                <span>Streamlit</span>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <i class="far fa-folder folder-icon"></i>
+                <div class="project-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <h3><a href="#" style="text-decoration: none; color: inherit;">Smart Travel Planner</a></h3>
+            <p style="margin-top: 10px; color: #a8b3cf;">
+                A web application that generates personalized travel itineraries. 
+                Utilizes the <b>OpenAI API</b> to generate schedules based on user budget and interests, 
+                demonstrating the integration of AI logic into a consumer-facing product.
+            </p>
+            <div class="tech-stack">
+                <span>Flask</span>
+                <span>OpenAI API</span>
+                <span>Prompt Engineering</span>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-header">
+                <i class="far fa-folder folder-icon"></i>
+                <div class="project-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <h3><a href="#" style="text-decoration: none; color: inherit;">Sentiment Analysis Dashboard</a></h3>
+            <p style="margin-top: 10px; color: #a8b3cf;">
+                A dashboard for analyzing customer reviews. 
+                Used <b>Hugging Face</b> transformers for sentiment classification and <b>Pandas</b> for data aggregation. 
+                Provides actionable insights for product management.
+            </p>
+            <div class="tech-stack">
+                <span>Python</span>
+                <span>Hugging Face</span>
+                <span>Data Viz</span>
+            </div>
+        </div>
+    </section>
+
+    <section style="text-align: center; margin-bottom: 100px;">
+        <h2>Ready to learn more?</h2>
+        <p style="color: var(--secondary-color); margin-bottom: 20px;">
+            I am currently looking for entry-level opportunities in AI Application Development.
+        </p>
+        <a href="mailto:your.email@example.com" class="btn">Say Hello</a>
+    </section>
+
+    <script>
+        // --- Interactive Terminal Script ---
+        const terminalContent = document.getElementById('terminal-content');
+
+        function runCommand(command) {
+            // 1. Add user command line
+            const userLine = document.createElement('div');
+            userLine.className = 'input-line';
+            userLine.innerHTML = `<span class="prompt">$</span> ${command}`;
+            terminalContent.appendChild(userLine);
+
+            // 2. Simulate processing delay
+            setTimeout(() => {
+                let responseText = "";
+                if (command === 'Show Skills') {
+                    responseText = "> Accessing database... Found: Python, Azure, NLP, LangChain. <br>> I love building systems that connect these tools.";
+                } else if (command === 'My Goal') {
+                    responseText = "> Objective: To become an AI Solutions Engineer who builds scalable, user-friendly AI applications.";
+                }
+
+                const responseLine = document.createElement('div');
+                responseLine.className = 'msg-system';
+                responseLine.style.marginTop = "5px";
+                responseLine.innerHTML = responseText;
+                terminalContent.appendChild(responseLine);
+                
+                // Scroll to bottom
+                terminalContent.scrollTop = terminalContent.scrollHeight;
+            }, 600);
+        }
+
+        // --- Subtle Background Particles ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const stars = [];
+        for(let i=0; i<50; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2,
+                vx: Math.random() * 0.5 - 0.25,
+                vy: Math.random() * 0.5 - 0.25
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#58a6ff";
+            
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
+                ctx.fill();
+                star.x += star.vx;
+                star.y += star.vy;
+
+                if(star.x < 0 || star.x > canvas.width) star.vx *= -1;
+                if(star.y < 0 || star.y > canvas.height) star.vy *= -1;
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
